@@ -88,7 +88,7 @@ type UserRouteParams = RouteParams<AppRouter, 'users'> // {date: Date}
 import {RouteAndParams} from 'typescript-router'
 
 type AppRouter = typeof router
-type UserRouteParams = RouteAndParams<AppRouter>
+type AppRouteParams = RouteAndParams<AppRouter>
 
 // Is the same type as:
 
