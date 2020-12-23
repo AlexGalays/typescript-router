@@ -5,8 +5,8 @@
     "strict": true,
     "forceConsistentCasingInFileNames": true,
     "noErrorTruncation": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "noEmit": true
   },
-  "compileOnSave": false,
-  "filesGlob": ["router.ts", "test/**/*.ts"]
+  "compileOnSave": false
 }

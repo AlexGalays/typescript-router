@@ -1,7 +1,6 @@
 import expect from 'expect'
-import { Router, Route } from '../'
+import { Router, Route, RouteAndParams, RouteParams } from '../'
 import { object, number, string, isoDate } from 'idonttrustlikethat'
-import { RouteAndParams, RouteParams } from '../router'
 
 describe('Router', () => {
   it('works with a basic scenario', () => {
