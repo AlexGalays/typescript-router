@@ -1,13 +1,13 @@
 {
   "name": "typescript-router",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A small, fully type-safe, TypeScript router",
   "main": "commonjs/router.js",
   "scripts": {
     "build": "npm run build-es && npm run build-commonjs",
     "build-es": "tsc router.ts --outDir es --strict --noUnusedParameters --declaration --lib dom,es5,es6 --module es6 --target es6 --moduleResolution node",
     "build-commonjs": "tsc router.ts --outDir commonjs --strict --noUnusedParameters --declaration --lib dom,es5,es6 --target es5",
-    "pretest": "npm run build && tsc test/test.ts --lib dom,es5,es6 --strict --esModuleInterop",
+    "pretest": "npm run build && tsc test/test.ts --lib dom,es5,es6 --strict --esModuleInterop --target es5",
     "test": "mocha"
   },
 

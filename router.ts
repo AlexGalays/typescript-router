@@ -3,25 +3,44 @@ import { Validator, object, errorDebugString } from 'idonttrustlikethat'
 interface Router<ROUTES extends Record<string, RouteDefinition<string, {}>>> {
   readonly definitions: ROUTES
 
+  /**
+   * The current route. It's always defined and can be the special 'not_found' route.
+   */
   readonly route: RouteUnionFromDefinitions<RoutesWithNotFound<ROUTES>>
+
+  /**
+   * Register a listener to be notified when the router's current 'route' field changes.
+   */
   readonly onChange: (callback: () => void) => Unsubscribe
 
+  /**
+   * Pushes an entry to the browser's history stack.
+   */
   readonly push: <NAME extends keyof ROUTES>(
     routeName: NAME,
     params: SerializableValues<ROUTES[NAME]['validator']['T']>
   ) => void
 
+  /**
+   * Modifies the current history entry in the history stack.
+   */
   readonly replace: <NAME extends keyof ROUTES>(
     routeName: NAME,
     params: SerializableValues<ROUTES[NAME]['validator']['T']>
   ) => void
 
+  /**
+   * Creates a link string.
+   */
   readonly link: <NAME extends keyof ROUTES>(
     routeName: NAME,
     params: SerializableValues<ROUTES[NAME]['validator']['T']>
   ) => string
 }
 
+/**
+ * The route factory function.
+ */
 export function Route<PARAMS extends Validator<{}>>(
   path: string,
   params?: PARAMS
@@ -29,6 +48,9 @@ export function Route<PARAMS extends Validator<{}>>(
   return { path, validator: params || ((object({}) as unknown) as PARAMS) }
 }
 
+/**
+ * The router factory function.
+ */
 export function Router<ROUTES extends Record<string, RouteDefinitionValue<{}>>>(
   definitions: ROUTES,
   options: Options
@@ -230,8 +252,11 @@ type SerializableValues<T> = {
   [K in keyof T]: T[K] extends number | string | undefined ? T[K] : string
 }
 
+// Using a full router with its methods  can lead to method signature incompatibilities.
+type AnyBaseRouter = Pick<Router<any>, 'definitions'>
+
 export type RouteParams<
-  ROUTER extends Router<any>,
+  ROUTER extends AnyBaseRouter,
   NAME extends keyof ROUTER['definitions']
 > = ROUTER['definitions'][NAME]['validator']['T']
 
@@ -242,6 +267,6 @@ type RouteAndParamsTemp<ROUTES extends Record<string, RouteDefinition<string, {}
 }
 
 // The union of all valid route name + params tuples that could be passed as arguments to push/replace/link
-export type RouteAndParams<ROUTER extends Router<any>> = ValueOf<
+export type RouteAndParams<ROUTER extends AnyBaseRouter> = ValueOf<
   RouteAndParamsTemp<ROUTER['definitions']>
 >

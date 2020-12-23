@@ -1,6 +1,7 @@
 import expect from 'expect'
 import { Router, Route } from '../'
 import { object, number, string, isoDate } from 'idonttrustlikethat'
+import { RouteAndParams, RouteParams } from '../router'
 
 describe('Router', () => {
   it('works with a basic scenario', () => {
@@ -18,6 +19,8 @@ describe('Router', () => {
       },
       { onNotFound }
     )
+
+    type AppRouter = typeof router
 
     const unsub = router.onChange(() => {
       changeCounter++
@@ -61,6 +64,20 @@ describe('Router', () => {
     unsub()
     router.push('user', { id: UserId('123') })
     expect(changeCounter).toBe(onChangeBeforeUnsubbing)
+
+    type AppRouteParamTuples = RouteAndParams<AppRouter>
+    type UsersRouteParams = RouteParams<AppRouter, 'users'>
+    type UserRouteParams = RouteParams<AppRouter, 'user'>
+
+    const _typeAssertion1: AreEquals<{ date: Date }, UsersRouteParams> = true
+    const _typeAssertion2: AreEquals<{ id: UserId; q?: number }, UserRouteParams> = true
+
+    type SerializableType =
+      | ['index', {}]
+      | ['users', { date: string }]
+      | ['user', { id: UserId; q?: number | undefined }]
+
+    const _typeAssertion3: AreEquals<SerializableType, AppRouteParamTuples> = true
   })
 })
 
@@ -92,3 +109,9 @@ function mockGlobals({ startLocation }: { startLocation: { pathname: string; sea
     replaceState: changeHistoryState
   }
 }
+
+type AreEquals<T, U, Y = true, N = false> = (<G>() => G extends T ? 1 : 2) extends <
+  G
+>() => G extends U ? 1 : 2
+  ? Y
+  : N
