@@ -1,6 +1,6 @@
 {
   "name": "typescript-router",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "A small, fully type-safe, TypeScript router",
   "main": "commonjs/router.js",
   "scripts": {

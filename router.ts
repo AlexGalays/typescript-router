@@ -75,7 +75,7 @@ export function Router<ROUTES extends Record<string, RouteDefinitionValue<{}>>>(
       if (!match) continue
 
       const stringParams = parsedRoute.keys.reduce<Record<string, string>>((params, key, index) => {
-        params[key] = match[index + 1]
+        params[key] = decodeURIComponent(match[index + 1])
         return params
       }, parseQueryParams(search.slice(1)))
 

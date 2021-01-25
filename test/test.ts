@@ -96,6 +96,34 @@ describe('Router', () => {
 
     expect(router.route.name).toBe('index')
   })
+
+  it('decodes the url params', () => {
+    mockGlobals({
+      startLocation: {
+        pathname: '/users/LIG%3AIDFM%3AC01130',
+        search: '?extra=LIG%3AIDFM%3AC01130'
+      }
+    })
+
+    const router = Router(
+      {
+        index: Route('/'),
+        users: Route('/users/:userId', object({ userId: string, extra: string }))
+      },
+      {
+        onNotFound: reason => {
+          console.error(reason)
+        }
+      }
+    )
+
+    expect(router.route.name).toBe('users')
+
+    expect(router.route.params).toEqual({
+      userId: 'LIG:IDFM:C01130',
+      extra: 'LIG:IDFM:C01130'
+    })
+  })
 })
 
 export type UserId = string & { _tag: 'UserId' }
