@@ -53,7 +53,7 @@ export function Route<PARAMS extends Validator<{}>>(
  */
 export function Router<ROUTES extends Record<string, RouteDefinitionValue<{}>>>(
   definitions: ROUTES,
-  options: Options
+  options: Options<Router<RouteValueToDefinition<ROUTES>>>
 ): Router<RouteValueToDefinition<ROUTES>> {
   const routes = Object.keys(definitions).reduce((acc, name) => {
     const route = definitions[name]
@@ -65,12 +65,6 @@ export function Router<ROUTES extends Record<string, RouteDefinitionValue<{}>>>(
 
   let subs: Function[] = []
   let _route = notFound
-
-  setRouteFromHistory()
-  addEventListener('popstate', () => {
-    setRouteFromHistory()
-    fireOnChange()
-  })
 
   function setRouteFromHistory() {
     const path = location.pathname
@@ -142,12 +136,12 @@ export function Router<ROUTES extends Record<string, RouteDefinitionValue<{}>>>(
   function onRouteNotFound(reason: string) {
     // Set the route to notFound first, in case the onNotFound callback ends up redirecting to some other routes instead.
     _route = notFound
-    options.onNotFound(reason)
+    options.onNotFound(reason, router)
     // if no redirect occured then fire onChange, otherwise it already fired from push/replace.
     if (_route.name === 'notFound') fireOnChange()
   }
 
-  return ({
+  const router = ({
     get route() {
       return _route
     },
@@ -157,6 +151,14 @@ export function Router<ROUTES extends Record<string, RouteDefinitionValue<{}>>>(
     replace,
     link
   } as any) as Router<RouteValueToDefinition<ROUTES>>
+
+  setRouteFromHistory()
+  addEventListener('popstate', () => {
+    setRouteFromHistory()
+    fireOnChange()
+  })
+
+  return router
 }
 
 // Extracts a simple chain like /path/:id to a regexp and the list of path keys it found.
@@ -221,8 +223,8 @@ interface CurrentRoute<NAME, PARAMS> {
   params: PARAMS
 }
 
-interface Options {
-  onNotFound: (reason: string) => void
+interface Options<ROUTER> {
+  onNotFound: (reason: string, router: ROUTER) => void
 }
 
 type RouteUnionFromDefinitions<ROUTES extends Record<string, RouteDefinition<string, {}>>> = {

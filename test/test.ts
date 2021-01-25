@@ -78,6 +78,24 @@ describe('Router', () => {
 
     const _typeAssertion3: AreEquals<SerializableType, AppRouteParamTuples> = true
   })
+
+  it('can redirect on route not found during init', () => {
+    mockGlobals({ startLocation: { pathname: '/ohno', search: '' } })
+
+    const router = Router(
+      {
+        index: Route('/'),
+        users: Route('/users', object({ date: isoDate }))
+      },
+      {
+        onNotFound: (_reason, r) => {
+          r.replace('index', {})
+        }
+      }
+    )
+
+    expect(router.route.name).toBe('index')
+  })
 })
 
 export type UserId = string & { _tag: 'UserId' }

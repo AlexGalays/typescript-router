@@ -1,6 +1,6 @@
 {
   "name": "typescript-router",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "A small, fully type-safe, TypeScript router",
   "main": "commonjs/router.js",
   "scripts": {
@@ -10,11 +10,9 @@
     "pretest": "npm run build && tsc test/test.ts --lib dom,es5,es6 --strict --esModuleInterop --target es5",
     "test": "mocha"
   },
-
   "dependencies": {
     "idonttrustlikethat": ">=1.0.0"
   },
-
   "devDependencies": {
     "expect": "26.6.2",
     "mocha": "8.2.1",
@@ -22,10 +20,8 @@
     "prettier": "2.1.2",
     "@types/mocha": "5.2.7"
   },
-
   "author": "Alex Galays",
   "license": "MIT",
-
   "prettier": {
     "tabWidth": 2,
     "printWidth": 100,
