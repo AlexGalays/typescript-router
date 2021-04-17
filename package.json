@@ -1,6 +1,6 @@
 {
   "name": "typescript-router",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "A small, fully type-safe, TypeScript router",
   "main": "commonjs/router.js",
   "scripts": {
@@ -11,7 +11,7 @@
     "test": "mocha"
   },
   "dependencies": {
-    "idonttrustlikethat": ">=1.0.0"
+    "idonttrustlikethat": ">=2.0.1"
   },
   "devDependencies": {
     "expect": "26.6.2",
