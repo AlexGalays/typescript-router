@@ -11,14 +11,14 @@
     "test": "mocha"
   },
   "dependencies": {
-    "idonttrustlikethat": ">=2.0.1"
+    "idonttrustlikethat": ">=2.0.8"
   },
   "devDependencies": {
-    "expect": "26.6.2",
-    "mocha": "8.2.1",
-    "typescript": "4.1.2",
-    "prettier": "2.1.2",
-    "@types/mocha": "5.2.7"
+    "expect": "27.5.1",
+    "typescript": "4.6.2",
+    "prettier": "2.5.1",
+    "mocha": "9.2.2",
+    "@types/mocha": "9.1.0"
   },
   "author": "Alex Galays",
   "license": "MIT",
