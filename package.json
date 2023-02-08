@@ -5,13 +5,13 @@
   "main": "commonjs/router.js",
   "scripts": {
     "build": "npm run build-es && npm run build-commonjs",
-    "build-es": "tsc router.ts --outDir es --strict --noUnusedParameters --declaration --lib dom,es5,es6 --module es6 --target es6 --moduleResolution node",
-    "build-commonjs": "tsc router.ts --outDir commonjs --strict --noUnusedParameters --declaration --lib dom,es5,es6 --target es5",
-    "pretest": "npm run build && tsc test/test.ts --lib dom,es5,es6 --strict --esModuleInterop --target es5",
+    "build-es": "tsc router.ts --outDir es --strict --noUnusedParameters --declaration --lib dom,es5,es6 --module es6 --target es6 --moduleResolution node --skipLibCheck",
+    "build-commonjs": "tsc router.ts --outDir commonjs --strict --noUnusedParameters --declaration --lib dom,es5,es6 --target es5 --skipLibCheck",
+    "pretest": "npm run build && tsc test/test.ts --lib dom,es5,es6 --strict --esModuleInterop --target es5 --skipLibCheck",
     "test": "mocha"
   },
   "dependencies": {
-    "idonttrustlikethat": ">=2.0.1"
+    "zod": ">=3.19.0"
   },
   "devDependencies": {
     "expect": "26.6.2",

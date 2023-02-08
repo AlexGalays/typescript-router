@@ -1,6 +1,6 @@
 import expect from 'expect'
 import { Router, Route, RouteAndParams, RouteParams } from '../'
-import { object, number, string, isoDate } from 'idonttrustlikethat'
+import { object, number, string, date, preprocess, infer as INFER } from 'zod'
 
 describe('Router', () => {
   it('works with a basic scenario', () => {
@@ -14,7 +14,7 @@ describe('Router', () => {
       {
         index: Route('/'),
         users: Route('/users', object({ date: isoDate })),
-        user: Route('/users/:id', object({ id: userId, q: number.optional() }))
+        user: Route('/users/:id', object({ id: userId, q: number().optional() }))
       },
       { onNotFound }
     )
@@ -108,7 +108,7 @@ describe('Router', () => {
     const router = Router(
       {
         index: Route('/'),
-        users: Route('/users/:userId', object({ userId: string, extra: string }))
+        users: Route('/users/:userId', object({ userId: string(), extra: string() }))
       },
       {
         onNotFound: reason => {
@@ -126,9 +126,10 @@ describe('Router', () => {
   })
 })
 
-export type UserId = string & { _tag: 'UserId' }
 
-export const userId = string.tagged<UserId>()
+
+export const userId = string().brand<'UserId'>()
+export type UserId = INFER<typeof userId>
 
 function UserId(fromString: string) {
   return fromString as UserId
@@ -160,3 +161,8 @@ type AreEquals<T, U, Y = true, N = false> = (<G>() => G extends T ? 1 : 2) exten
 >() => G extends U ? 1 : 2
   ? Y
   : N
+
+
+  const isoDate = preprocess((arg) => {
+    if (typeof arg === "string" || arg instanceof Date) return new Date(arg);
+  }, date());

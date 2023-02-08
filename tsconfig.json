@@ -6,7 +6,8 @@
     "forceConsistentCasingInFileNames": true,
     "noErrorTruncation": true,
     "esModuleInterop": true,
-    "noEmit": true
+    "noEmit": true,
+    "skipLibCheck": true
   },
   "compileOnSave": false
 }

@@ -1,4 +1,6 @@
-import { Validator, object, errorDebugString } from 'idonttrustlikethat'
+import { ZodType, ZodTypeDef, object, infer as INFER } from 'zod'
+
+type Validator<T> = ZodType<T, ZodTypeDef, unknown>
 
 interface Router<ROUTES extends Record<string, RouteDefinition<string, {}>>> {
   readonly definitions: ROUTES
@@ -18,7 +20,7 @@ interface Router<ROUTES extends Record<string, RouteDefinition<string, {}>>> {
    */
   readonly push: <NAME extends keyof ROUTES>(
     routeName: NAME,
-    params: SerializableValues<ROUTES[NAME]['validator']['T']>
+    params: SerializableValues<INFER<ROUTES[NAME]['validator']>>
   ) => void
 
   /**
@@ -26,7 +28,7 @@ interface Router<ROUTES extends Record<string, RouteDefinition<string, {}>>> {
    */
   readonly replace: <NAME extends keyof ROUTES>(
     routeName: NAME,
-    params: SerializableValues<ROUTES[NAME]['validator']['T']>
+    params: SerializableValues<INFER<ROUTES[NAME]['validator']>>
   ) => void
 
   /**
@@ -34,7 +36,7 @@ interface Router<ROUTES extends Record<string, RouteDefinition<string, {}>>> {
    */
   readonly link: <NAME extends keyof ROUTES>(
     routeName: NAME,
-    params: SerializableValues<ROUTES[NAME]['validator']['T']>
+    params: SerializableValues<INFER<ROUTES[NAME]['validator']>>
   ) => string
 }
 
@@ -79,17 +81,17 @@ export function Router<ROUTES extends Record<string, RouteDefinitionValue<{}>>>(
         return params
       }, parseQueryParams(search.slice(1)))
 
-      const validatedParams = parsedRoute.validator.validate(stringParams)
+      const validatedParams = parsedRoute.validator.safeParse(stringParams)
 
-      if (!validatedParams.ok) {
+      if (!validatedParams.success) {
         return onRouteNotFound(
-          'route match but params error. ' + errorDebugString(validatedParams.errors)
-        )
+          'route match but params error. ' + validatedParams.error.issues.join('\n'))
+        
       }
 
       return (_route = {
         name: parsedRoute.name,
-        params: validatedParams.value
+        params: validatedParams.data
       })
     }
 
@@ -213,7 +215,7 @@ type RouteValueToDefinition<ROUTES extends Record<string, RouteDefinitionValue<{
     : never
 }
 
-interface ParsedRouteDefinition<NAME, PARAMS> extends RouteDefinition<NAME, PARAMS> {
+interface ParsedRouteDefinition<NAME, PARAMS extends {}> extends RouteDefinition<NAME, PARAMS> {
   keys: string[]
   pattern: RegExp
 }
@@ -235,7 +237,7 @@ type RouteUnionFromDefinitions<ROUTES extends Record<string, RouteDefinition<str
 
 type CurrentRouteFromDefinition<ROUTE extends RouteDefinition<string, {}>> = CurrentRoute<
   ROUTE['name'],
-  ROUTE['validator']['T']
+  INFER<ROUTE['validator']>
 >
 
 type Unsubscribe = () => void
@@ -260,11 +262,11 @@ type AnyBaseRouter = Pick<Router<any>, 'definitions'>
 export type RouteParams<
   ROUTER extends AnyBaseRouter,
   NAME extends keyof ROUTER['definitions']
-> = ROUTER['definitions'][NAME]['validator']['T']
+> = INFER<ROUTER['definitions'][NAME]['validator']>
 
 type RouteAndParamsTemp<ROUTES extends Record<string, RouteDefinition<string, {}>>> = {
   [NAME in keyof ROUTES]: ROUTES[NAME] extends ROUTES[keyof ROUTES]
-    ? [NAME, SerializableValues<ROUTES[NAME]['validator']['T']>]
+    ? [NAME, SerializableValues<INFER<ROUTES[NAME]['validator']>>]
     : never
 }
 
