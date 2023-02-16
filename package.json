@@ -1,6 +1,6 @@
 {
-  "name": "typescript-router",
-  "version": "0.0.6",
+  "name": "typescript-router-zod",
+  "version": "0.0.1",
   "description": "A small, fully type-safe, TypeScript router",
   "main": "commonjs/router.js",
   "scripts": {
@@ -10,7 +10,7 @@
     "pretest": "npm run build && tsc test/test.ts --lib dom,es5,es6 --strict --esModuleInterop --target es5 --skipLibCheck",
     "test": "mocha"
   },
-  "dependencies": {
+  "peerDependencies": {
     "zod": ">=3.19.0"
   },
   "devDependencies": {

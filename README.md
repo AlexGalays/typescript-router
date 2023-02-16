@@ -2,6 +2,8 @@
 
 A small and very typesafe router for `TypeScript`. Can be used with any client library/framework.
 
+This is the [zod](https://github.com/colinhacks/zod) branch.
+
 Route matching only occurs on the path portion of the url but query strings are all passed along (though multivalued query params aren't supported)
 
 ## API
@@ -10,17 +12,14 @@ Route matching only occurs on the path portion of the url but query strings are 
 
 ```ts
   // This is the validation library this router uses.
-  import {string, number, isoDate} from 'idonttrustlikethat'
-  import {Router, Route} from 'typescript-router'
-
-  type UserId = string & { _tag: 'UserId' }
-  const userId = string.tagged<UserId>()
+  import {string, number} from 'zod'
+  import {Router, Route} from 'typescript-router-zod'
 
   const router = Router(
     {
       index: Route('/'),
       users: Route('/users', object({ date: isoDate })),
-      user: Route('/users/:id', object({ id: userId, q: number.optional() }))
+      user: Route('/users/:id', object({ id: userId, q: number().optional() }))
     },
     { onNotFound }
   )
@@ -28,6 +27,12 @@ Route matching only occurs on the path portion of the url but query strings are 
   function onNotFound(reason: string) {
     console.error(reason)
   }
+
+  const userId = string().brand<'UserId'>()
+
+  const isoDate = preprocess((arg) => {
+    if (typeof arg === "string" || arg instanceof Date) return new Date(arg);
+  }, date());
 ```
 
 ### Finding out the current Route
@@ -52,7 +57,7 @@ const unsubscribe = router.onChange(() => {
 ### Update the route
 
 Note: when using `push`, `replace` or `link` the params value types are converted to strings or numbers because the router needs to concatenate those in the url.  
-However, tagged strings keep their strong typing.   
+However, tagged/branded strings keep their strong typing.   
 
 ```ts
 router.push('users', {date: '2020-12-22T17:31:58.337Z'})
@@ -76,7 +81,7 @@ Two helper types are exported:
 #### The type of a given route params
 
 ```ts
-import {RouteParams} from 'typescript-router'
+import {RouteParams} from 'typescript-router-zod'
 
 type AppRouter = typeof router
 type UserRouteParams = RouteParams<AppRouter, 'users'> // {date: Date}
@@ -85,7 +90,7 @@ type UserRouteParams = RouteParams<AppRouter, 'users'> // {date: Date}
 #### The type of all route name + serializable params combinations, as a tuple
 
 ```ts
-import {RouteAndParams} from 'typescript-router'
+import {RouteAndParams} from 'typescript-router-zod'
 
 type AppRouter = typeof router
 type AppRouteParams = RouteAndParams<AppRouter>
