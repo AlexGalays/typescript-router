@@ -2,6 +2,8 @@
 
 A small and very typesafe router for `TypeScript`. Can be used with any client library/framework.
 
+For the version/branch using `zod` for validation, see [Zod branch](https://github.com/AlexGalays/typescript-router/tree/zod)
+
 Route matching only occurs on the path portion of the url but query strings are all passed along (though multivalued query params aren't supported)
 
 ## API
